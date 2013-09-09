@@ -15,8 +15,13 @@
         var capitalizeHandler = function(handler) {
             return handler.charAt(0).toUpperCase() + handler.substring(1);
         }
+        
+        var pageChangeEvent = '$locationChangeSuccess';
+        this.setPageChangeEvent = function(newPageChangeEvent) {
+          pageChangeEvent = newPageChangeEvent;
+        }
 
-        this.$get = function($injector, $rootScope, $location) {
+        this.$get = function($injector, $rootScope, $location, $browser) {
 
             // Helper methods
             var eventHandlers = [];
@@ -32,9 +37,14 @@
             }
 
             // Event listeing
-            $rootScope.$on('$locationChangeSuccess', function() {
+            $rootScope.$on(pageChangeEvent, function() {
+                var base = $browser.baseHref() || "";
+                
+                if (base) base = '/' + base;
+                if (!base.match(/\/$/)) base = base + '/';
+                
                 forEachHandlerDo(function(handler) {
-                    var url = $location.path();
+                    var url = base + $location.path();
                     if (url) {
                         handler.trackPageView(url);    
                     }

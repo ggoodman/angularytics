@@ -16,7 +16,8 @@
         var service = {};
 
         service.trackPageView = function (url) {
-            ga('send', 'pageView', url);
+            ga('set', 'page', url);
+            ga('send', 'pageview', url);
         };
 
         service.trackEvent = function (category, action, opt_label, opt_value, opt_noninteraction) {
