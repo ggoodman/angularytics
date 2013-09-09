@@ -21,7 +21,7 @@
           pageChangeEvent = newPageChangeEvent;
         }
 
-        this.$get = function($injector, $rootScope, $location) {
+        this.$get = function($injector, $rootScope, $location, $browser) {
 
             // Helper methods
             var eventHandlers = [];
@@ -38,8 +38,13 @@
 
             // Event listeing
             $rootScope.$on(pageChangeEvent, function() {
+                var base = $browser.baseHref() || "";
+                
+                if (base) base = '/' + base;
+                if (!base.match(/\/$/)) base = base + '/';
+                
                 forEachHandlerDo(function(handler) {
-                    var url = $location.path();
+                    var url = base + $location.path();
                     if (url) {
                         handler.trackPageView(url);    
                     }
