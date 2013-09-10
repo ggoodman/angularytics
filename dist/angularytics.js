@@ -21,7 +21,8 @@
       '$injector',
       '$rootScope',
       '$location',
-      function ($injector, $rootScope, $location) {
+      '$browser',
+      function ($injector, $rootScope, $location, $browser) {
         var eventHandlers = [];
         angular.forEach(eventHandlersNames, function (handler) {
           eventHandlers.push($injector.get('Angularytics' + handler + 'Handler'));
@@ -32,8 +33,13 @@
           });
         };
         $rootScope.$on(pageChangeEvent, function () {
+          var base = $browser.baseHref() || '';
+          if (base)
+            base = '/' + base;
+          if (!base.match(/\/$/))
+            base = base + '/';
           forEachHandlerDo(function (handler) {
-            var url = $location.path();
+            var url = base + $location.path();
             if (url) {
               handler.trackPageView(url);
             }
